@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 from PIL import Image, ImageDraw, ImageFont
 import os, sys, gzip, math, argparse, colorsys, datetime
@@ -467,12 +467,13 @@ def closest_index(n, m_list, interpolate=False):
 
 def word_aa(label, pt, fg_color, bg_color):
     f = ImageFont.truetype(vera_path, pt*3)
-    s = f.getsize(label)
+    s = [0,0]
+    unused1, unused2, s[0], s[1] = f.getbbox(label)
     s = (s[0], pt*3 + 3)  # getsize lies, manually compute
     w_img = Image.new("RGB", s, bg_color)
     w_draw = ImageDraw.Draw(w_img)
     w_draw.text((0, 0), label, font=f, fill=fg_color)
-    return w_img.resize((s[0]//3, s[1]//3), Image.ANTIALIAS)
+    return w_img.resize((s[0]//3, s[1]//3), Image.Resampling.LANCZOS)
 
 def blend(percent, c1, c2):
     "c1 and c2 are RGB tuples"
@@ -622,4 +623,3 @@ create_labels(args, img)
 
 print("saving")
 img.save(args.output_path)
-
